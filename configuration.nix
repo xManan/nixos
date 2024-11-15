@@ -8,6 +8,8 @@ let
   ) { };
 in
 {
+  nixpkgs.config.allowUnfree = true;
+
   nixpkgs.overlays = [ moz_overlay ];
 
   nixpkgs.config.packageOverrides = pkgs: {
@@ -34,9 +36,16 @@ in
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  nixpkgs.config.allowUnfree = true;
-
   hardware.pulseaudio.enable = true;
+
+  hardware.opengl = {
+    driSupport = true;
+    driSupport32Bit = true;
+  
+    extraPackages = [ pkgs.amdvlk ];
+    extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
+  };
+
 
   environment.pathsToLink = [ "/libexec" ];
 
@@ -47,6 +56,8 @@ in
       xterm.enable = false;
     };
    
+    videoDrivers = [ "amdgpu" ];
+
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
@@ -102,6 +113,8 @@ in
       XDG_DATA_HOME = "$HOME/.local/share";
       XDG_STATE_HOME = "$HOME/.local/state";
       XDG_BIN_HOME = "$HOME/.local/bin";
+
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     };
 
     xdg.userDirs = {
@@ -147,9 +160,11 @@ in
 	vi = "nvim";
 	vim = "nvim";
       };
+
       history = {
         size = 10000;
       };
+
       oh-my-zsh = {
         enable = true;
         plugins = [ "git" "thefuck" ];
@@ -200,6 +215,23 @@ in
       nix-alien-pkgs.nix-alien
       vscodium
       dbeaver-bin
+      mangohud
+      protonup
+      apostrophe
+      flameshot
+      mpv
+      deluge
+      clipit
+      gcc
+      gnumake
+      fd
+      ripgrep
+      xclip
+      fzf
+
+      # lsp
+      nodePackages_latest.intelephense
+      gopls
     ];
 
   };
@@ -210,6 +242,16 @@ in
   };
 
   programs.tmux.enable = true;
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    localNetworkGameTransfers.openFirewall = true;
+    gamescopeSession.enable = true;
+  };
+
+  programs.gamemode.enable = true;
 
   virtualisation.docker.rootless = {
     enable = true;
@@ -224,10 +266,10 @@ in
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   system.copySystemConfiguration = true;
 

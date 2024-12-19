@@ -46,9 +46,9 @@ in
     extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
   };
 
-
   environment.pathsToLink = [ "/libexec" ];
 
+  services.openssh.enable = true;
   services.xserver = {
     enable = true;
     xkb.layout = "us";
@@ -228,6 +228,8 @@ in
       ripgrep
       xclip
       fzf
+      gimp
+      sqlitebrowser
 
       # lsp
       nodePackages_latest.intelephense
@@ -261,6 +263,12 @@ in
   environment.systemPackages = with pkgs; [
     wget
     git
+    (lutris.override {
+      extraLibraries =  pkgs: [
+      ];
+      extraPkgs = pkgs: [
+      ];
+    })
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

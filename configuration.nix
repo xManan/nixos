@@ -185,7 +185,6 @@ in
       package = pkgs.vscodium;
       extensions = with pkgs.vscode-extensions; [
         asvetliakov.vscode-neovim
-	bmewburn.vscode-intelephense-client
       ];
     };
 
@@ -219,6 +218,8 @@ in
       protonup
       apostrophe
       flameshot
+      networkmanagerapplet
+      pasystray
       mpv
       deluge
       clipit
@@ -230,9 +231,11 @@ in
       fzf
       gimp
       sqlitebrowser
+      stow
+      pass
 
       # lsp
-      nodePackages_latest.intelephense
+      phpactor
       gopls
     ];
 

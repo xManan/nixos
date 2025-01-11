@@ -36,7 +36,14 @@ in
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  hardware.pulseaudio.enable = true;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true; # if not already enabled
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    #jack.enable = true;
+  };
 
   hardware.opengl = {
     driSupport = true;
@@ -233,6 +240,15 @@ in
       sqlitebrowser
       stow
       pass
+      (lutris.override {
+        extraLibraries =  pkgs: [
+        ];
+        extraPkgs = pkgs: [
+        ];
+      })
+      heroic
+      discord
+      htop
 
       # lsp
       phpactor
@@ -253,11 +269,9 @@ in
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     localNetworkGameTransfers.openFirewall = true;
-    gamescopeSession.enable = true;
   };
 
   programs.gamemode.enable = true;
-
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
@@ -266,12 +280,6 @@ in
   environment.systemPackages = with pkgs; [
     wget
     git
-    (lutris.override {
-      extraLibraries =  pkgs: [
-      ];
-      extraPkgs = pkgs: [
-      ];
-    })
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

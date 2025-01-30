@@ -38,11 +38,10 @@ in
 
   security.rtkit.enable = true;
   services.pipewire = {
-    enable = true; # if not already enabled
+    enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    #jack.enable = true;
   };
 
   hardware.opengl = {
@@ -68,10 +67,9 @@ in
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
-        dmenu #application launcher most people use
-        i3status # gives you the default i3 status bar
-        i3lock #default i3 screen locker
-        i3blocks #if you are planning on using i3blocks over i3status
+        dmenu
+        i3status
+        i3lock
      ];
     };
   };
@@ -83,6 +81,9 @@ in
   programs.zsh.enable = true;
   programs.dconf.enable = true;
   programs.nix-ld.enable = true;
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   users.users.manan = {
     isNormalUser = true;
@@ -247,7 +248,6 @@ in
         ];
       })
       heroic
-      discord
       htop
 
       # lsp

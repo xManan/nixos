@@ -2,7 +2,7 @@
 
 let
   moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz";
   nix-alien-pkgs = import (
     builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
   ) { };
@@ -26,6 +26,7 @@ in
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.kernelModules = [ "amdgpu" ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -44,12 +45,10 @@ in
     pulse.enable = true;
   };
 
-  hardware.opengl = {
-    driSupport = true;
-    driSupport32Bit = true;
-  
+  hardware.graphics = {
     extraPackages = [ pkgs.amdvlk ];
     extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
+    enable32Bit = true;
   };
 
   environment.pathsToLink = [ "/libexec" ];
@@ -84,6 +83,7 @@ in
   services.flatpak.enable = true;
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  xdg.portal.config.common.default = "*";
 
   users.users.manan = {
     isNormalUser = true;
@@ -105,12 +105,12 @@ in
       enable = true;
       theme = {
         name = "Adwaita-dark";
-        package = pkgs.gnome.gnome-themes-extra;
+        package = pkgs.gnome-themes-extra;
       };
     };
 
     home.pointerCursor = {
-      package = pkgs.gnome.adwaita-icon-theme;
+      package = pkgs.adwaita-icon-theme;
       name = "Adwaita"; 
       size = 16;
     };
@@ -152,7 +152,7 @@ in
         name = "JetBrains Mono";
         size = 16;
       };
-      theme = "Kaolin Aurora";
+      themeFile = "Kaolin_Aurora";
     };
 
     programs.zsh = {
@@ -217,7 +217,7 @@ in
     };
 
     home.packages = with pkgs; [
-      cinnamon.nemo
+      nemo
       thefuck
       nix-alien-pkgs.nix-alien
       vscodium
@@ -292,5 +292,5 @@ in
 
   system.copySystemConfiguration = true;
 
-  system.stateVersion = "24.05";
+  system.stateVersion = "24.11";
 }

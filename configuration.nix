@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 let
-  moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz";
   nix-alien-pkgs = import (
     builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
@@ -9,8 +8,6 @@ let
 in
 {
   nixpkgs.config.allowUnfree = true;
-
-  nixpkgs.overlays = [ moz_overlay ];
 
   nixpkgs.config.packageOverrides = pkgs: {
     nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
@@ -21,6 +18,7 @@ in
   imports =
     [
       ./hardware-configuration.nix
+      ./flatpak.nix
       (import "${home-manager}/nixos")
     ];
 
@@ -87,7 +85,7 @@ in
 
   users.users.manan = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "audio" ];
+    extraGroups = [ "wheel" "networkmanager" "audio" "tty" "dialout" ];
     shell = pkgs.zsh;
     packages = with pkgs; [
     ];
@@ -116,6 +114,7 @@ in
     };
 
     home.sessionVariables = {
+      TERM = "xterm-256color";
       XDG_CACHE_HOME = "$HOME/.cache";
       XDG_CONFIG_HOME = "$HOME/.config";
       XDG_DATA_HOME = "$HOME/.local/share";
@@ -167,6 +166,8 @@ in
 	v = "nvim";
 	vi = "nvim";
 	vim = "nvim";
+	dev = "nix develop --command zsh";
+	ytmp3 = "yt-dlp -x --add-metadata --audio-quality 0 --audio-format mp3";
       };
 
       history = {
@@ -196,26 +197,6 @@ in
       ];
     };
 
-    programs.firefox = {
-      enable = true;
-      package = pkgs.latest.firefox-nightly-bin;
-      profiles.default = {
-        id = 0;
-        name = "default";
-        isDefault = true;
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          ublock-origin
-          darkreader
-          youtube-recommended-videos
-        ];
-        settings = {
-          "browser.newtabpage.activity-stream.enabled" = false;
-	  "sidebar.revamp" = true;
-	  "sidebar.verticalTabs" = true;
-        };
-      };
-    };
-
     home.packages = with pkgs; [
       nemo
       thefuck
@@ -240,7 +221,7 @@ in
       gimp
       sqlitebrowser
       stow
-      pass
+      (pass.withExtensions (exts: [passExtensions.pass-otp]))
       (lutris.override {
         extraLibraries =  pkgs: [
         ];
@@ -249,10 +230,15 @@ in
       })
       heroic
       htop
+      hoppscotch
+      nodejs_23
+      arduino-ide
+      yt-dlp
 
       # lsp
       phpactor
       gopls
+      lua-language-server
     ];
 
   };

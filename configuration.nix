@@ -1,12 +1,14 @@
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz";
   nix-alien-pkgs = import (
     builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
-  ) { };
-in
-{
+  ) {};
+in {
   nixpkgs.config.allowUnfree = true;
 
   nixpkgs.config.packageOverrides = pkgs: {
@@ -15,18 +17,17 @@ in
     };
   };
 
-  imports =
-    [
-      ./hardware-configuration.nix
-      ./flatpak.nix
-      (import "${home-manager}/nixos")
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    ./flatpak.nix
+    (import "${home-manager}/nixos")
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.initrd.kernelModules = ["amdgpu"];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
@@ -44,12 +45,12 @@ in
   };
 
   hardware.graphics = {
-    extraPackages = [ pkgs.amdvlk ];
-    extraPackages32 = [ pkgs.driversi686Linux.amdvlk ];
+    extraPackages = [pkgs.amdvlk];
+    extraPackages32 = [pkgs.driversi686Linux.amdvlk];
     enable32Bit = true;
   };
 
-  environment.pathsToLink = [ "/libexec" ];
+  environment.pathsToLink = ["/libexec"];
 
   services.openssh.enable = true;
   services.xserver = {
@@ -58,8 +59,8 @@ in
     desktopManager = {
       xterm.enable = false;
     };
-   
-    videoDrivers = [ "amdgpu" ];
+
+    videoDrivers = ["amdgpu"];
 
     windowManager.i3 = {
       enable = true;
@@ -67,12 +68,12 @@ in
         dmenu
         i3status
         i3lock
-     ];
+      ];
     };
   };
 
   services.displayManager = {
-      defaultSession = "none+i3";
+    defaultSession = "none+i3";
   };
 
   programs.zsh.enable = true;
@@ -80,12 +81,12 @@ in
   programs.nix-ld.enable = true;
   services.flatpak.enable = true;
   xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
   xdg.portal.config.common.default = "*";
 
   users.users.manan = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "audio" "tty" "dialout" ];
+    extraGroups = ["wheel" "networkmanager" "audio" "tty" "dialout"];
     shell = pkgs.zsh;
     packages = with pkgs; [
     ];
@@ -109,7 +110,7 @@ in
 
     home.pointerCursor = {
       package = pkgs.adwaita-icon-theme;
-      name = "Adwaita"; 
+      name = "Adwaita";
       size = 16;
     };
 
@@ -125,16 +126,16 @@ in
     };
 
     xdg.userDirs = {
-    	enable = true;
-	createDirectories = true;
-        desktop = "${config.home-manager.users.manan.home.homeDirectory}/system/desktop";
-        download = "${config.home-manager.users.manan.home.homeDirectory}/downloads";
-        templates = "${config.home-manager.users.manan.home.homeDirectory}/system/templates";
-        publicShare = "${config.home-manager.users.manan.home.homeDirectory}/system/public";
-        documents = "${config.home-manager.users.manan.home.homeDirectory}/documents";
-        music = "${config.home-manager.users.manan.home.homeDirectory}/media/music";
-        pictures = "${config.home-manager.users.manan.home.homeDirectory}/media/photos";
-        videos = "${config.home-manager.users.manan.home.homeDirectory}/media/videos";
+      enable = true;
+      createDirectories = true;
+      desktop = "${config.home-manager.users.manan.home.homeDirectory}/system/desktop";
+      download = "${config.home-manager.users.manan.home.homeDirectory}/downloads";
+      templates = "${config.home-manager.users.manan.home.homeDirectory}/system/templates";
+      publicShare = "${config.home-manager.users.manan.home.homeDirectory}/system/public";
+      documents = "${config.home-manager.users.manan.home.homeDirectory}/documents";
+      music = "${config.home-manager.users.manan.home.homeDirectory}/media/music";
+      pictures = "${config.home-manager.users.manan.home.homeDirectory}/media/photos";
+      videos = "${config.home-manager.users.manan.home.homeDirectory}/media/videos";
     };
 
     home.sessionPath = [
@@ -159,15 +160,15 @@ in
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-    
+
       shellAliases = {
         ll = "ls -l";
         update = "sudo nixos-rebuild switch";
-	v = "nvim";
-	vi = "nvim";
-	vim = "nvim";
-	dev = "nix develop --command zsh";
-	ytmp3 = "yt-dlp -x --add-metadata --audio-quality 0 --audio-format mp3";
+        v = "nvim";
+        vi = "nvim";
+        vim = "nvim";
+        dev = "nix develop --command zsh";
+        ytmp3 = "yt-dlp -x --add-metadata --audio-quality 0 --audio-format mp3";
       };
 
       history = {
@@ -176,32 +177,23 @@ in
 
       oh-my-zsh = {
         enable = true;
-        plugins = [ "git" "thefuck" ];
+        plugins = ["git" "thefuck"];
         theme = "robbyrussell";
       };
     };
 
     programs.git = {
       enable = true;
-      userName  = "Manan Chawla";
+      userName = "Manan Chawla";
       userEmail = "mananchawla10@gmail.com";
     };
 
     programs.neovim.enable = true;
 
-    programs.vscode = {
-      enable = true;
-      package = pkgs.vscodium;
-      extensions = with pkgs.vscode-extensions; [
-        asvetliakov.vscode-neovim
-      ];
-    };
-
     home.packages = with pkgs; [
       nemo
       thefuck
       nix-alien-pkgs.nix-alien
-      vscodium
       dbeaver-bin
       mangohud
       protonup
@@ -223,7 +215,7 @@ in
       stow
       (pass.withExtensions (exts: [passExtensions.pass-otp]))
       (lutris.override {
-        extraLibraries =  pkgs: [
+        extraLibraries = pkgs: [
         ];
         extraPkgs = pkgs: [
         ];
@@ -234,13 +226,13 @@ in
       nodejs_23
       arduino-ide
       yt-dlp
+      blender
 
       # lsp
       phpactor
       gopls
       lua-language-server
     ];
-
   };
 
   programs.neovim = {

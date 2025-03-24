@@ -227,6 +227,7 @@ in {
       arduino-ide
       yt-dlp
       blender
+      obsidian
 
       # lsp
       phpactor
